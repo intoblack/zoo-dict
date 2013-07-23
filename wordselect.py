@@ -3,18 +3,17 @@
 
 
 
-import gtk
-import time
 import threading
 
 
 
 class WordSelect(object):
     
+    __instance = None
     __word = None
     __type = ""
     __change = False
-    __lock = threading.Lock
+    __lock = threading.Lock()
     
     
     @staticmethod
@@ -27,23 +26,17 @@ class WordSelect(object):
             WordSelect.__lock.release()
         return WordSelect.__instance
     
-    def get_select_Word(self):
+    def get_select_word(self):
         return self.__word
+    
+    def get_select_change(self):
+        return self.__change
     
     def set_select_word(self,word):
         WordSelect.__lock.acquire()
-        if not word and not word.strip() == '' and not self.__word == word:
+        if word and  not word.strip() == '' and not self.__word == word:
             self.__word = word
             self.__change = True
         else:
             self.__change = False
         WordSelect.__lock.release()
-        
-        
-        
-clipboard = gtk.clipboard_get()
-
-while True:
-    t = clipboard.wait_for_text()
-    time.sleep(1)
-    print t   
