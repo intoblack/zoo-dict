@@ -1,2 +1,8 @@
 eclipse.preferences.version=1
-encoding/test.py=utf-8
+encoding/Moudle.py=utf-8
+encoding/ZooException.py=utf-8
+encoding/detectword.py=utf-8
+encoding/suggestword.py=utf-8
+encoding/utils.py=utf-8
+encoding/wordselect.py=utf-8
+encoding/zoo-dict.py=utf-8

@@ -3,9 +3,9 @@
 
 import threading
 import gtk
-from wordselect import WordSelect
 import time
-import os
+import utils
+from suggestword import get_suggest_word
 
 class DetectClboard(threading.Thread):
     
@@ -33,7 +33,8 @@ class DetectClboard(threading.Thread):
 
 
 class MonitorClip(object):
-
+    _old = ''
+    
     def __init__(self):
         #self.clip = gtk.clipboard_get(gtk.gdk.SELECTION_CLIPBOARD)
         self.clip = gtk.clipboard_get(gtk.gdk.SELECTION_PRIMARY)
@@ -42,7 +43,13 @@ class MonitorClip(object):
 
     def _clipboard_changed(self,clipboard, event):
         text = clipboard.wait_for_text()
-        print text
+        if not text == self._old:
+            self._old = text
+            utils.cls()
+            for word in get_suggest_word(text):
+                print word.toString()
+            
+        
     
     
 if __name__ == "__main__":
