@@ -43,6 +43,7 @@ class MonitorClip(object):
 
     def _clipboard_changed(self,clipboard, event):
         text = clipboard.wait_for_text()
+        text = text.encode("utf-8")
         if not text == self._old:
             self._old = text
             utils.cls()
@@ -53,7 +54,7 @@ class MonitorClip(object):
     
     
 if __name__ == "__main__":
-    m = MonitorClip()
-    gtk.main()
+    m = DetectClboard()
+    m.start()
     
         

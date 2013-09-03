@@ -16,8 +16,12 @@ def query_suggest_word(word):
 
 def get_suggest_word(word):
     wordlist = []
-    for i in utils.jsonstrtodict(utils.clear_data(query_suggest_word("s")).replace("&nbsp;", " "))['s']:
+    for i in utils.jsonstrtodict(utils.clear_data(query_suggest_word(word)).replace("&nbsp;", " "))['s']:
         w = wordlabel()
         w.initWithDict(i)
         wordlist.append(w)
     return wordlist
+
+
+for i in get_suggest_word("angel"):
+    print i.toString()

@@ -20,7 +20,7 @@ _urlencode = urllib.urlencode
 
 
 def cls():
-    os.system("cls")
+    os.system("clear")
     
 def get_url_data(url , data = None,codemode = "gbk"):
     html = ""
