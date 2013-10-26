@@ -6,7 +6,7 @@ class Moudle:
     __dict__ = {}
 
     def __setattr__(self, attr, val):
-        self.__dict__[attr] = val
+        self.__dict__[attr] = val.encode('utf-8')
 
     def toDict(self):
         return self.__dict__
@@ -15,16 +15,13 @@ class Moudle:
         for _key, _value in datadict.items():
             setattr(self, _key, _value)
 
-    def toString(self):
-        restr = ''
-        for _key, _value in self.__dict__.items():
-            infostr = '%s,%s\n' % (_key, _value)
-            restr = restr + infostr
-        return restr
 
+    def __str__(self):
+        return ''.join(['%s : %s' % (_key , _value) for _key, _value in self.__dict__.items()])
 
 class wordlabel(Moudle):
-
+    #修改编码格式 ， 避免出现解码错误
+    #
     __tran = {'e': 'mean',
               'g': 'word'}
     word = None
