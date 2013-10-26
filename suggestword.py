@@ -1,5 +1,14 @@
+#!/usr/bin/env python
 #coding=utf-8
+'''
+功能：
+    query_suggest_word
+    变量：
+        word -> 查询词
+     从dict.cn获得建议词
+    get_suggest_word 分析获得到的建议词 解析
 
+'''
 
 import utils
 from  Moudle import wordlabel
@@ -15,13 +24,15 @@ def query_suggest_word(word):
 
 
 def get_suggest_word(word):
-    wordlist = []
-    for i in utils.jsonstrtodict(utils.clear_data(query_suggest_word(word)).replace("&nbsp;", " "))['s']:
-        w = wordlabel()
-        w.initWithDict(i)
-        wordlist.append(w)
-    return wordlist
-
-
-for i in get_suggest_word("angel"):
-    print i.toString()
+    return [ wordlabel(i['e'],i['g']) for i in utils.jsonstrtodict(utils.clear_data(query_suggest_word(word)).replace("&nbsp;", " "))['s']]
+    
+if __name__ == '__main__':
+    for i in get_suggest_word("angel"):
+        try:
+            print i
+        except Exception, e:
+            print e
+            continue
+        
+         
+        
