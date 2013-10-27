@@ -34,6 +34,7 @@ class DictWindow(Tk):
         self.__input = TextWord(main_window=self)
         self.__input.grid(
             padx=10, pady=10, sticky=self.get_anchor_str('LEFT_TOP'), ipadx=100, ipady=10)
+
         self.__querybutton = QueryButton(master=self, command=self.p)
         self.__querybutton.grid(
             ipadx=20, ipady=7, padx=10, pady=10, sticky=self.get_anchor_str('RIGHT_TOP'), row=0)
@@ -45,27 +46,27 @@ class DictWindow(Tk):
 
     def p(self):
         self.__show_box_text.set(self.__input.get())
-        self.test()
 
     def get_anchor_str(self, locate_string):
         return self.__locate_dict[locate_string]
-
-    def test(self):
-        x = '''
-        sdfasdf\n
-        asdfasd\n
-        asdfas \n
-        '''
-
-        self.__show_box_text.set(x)
 
 
 class TextWord(Entry):
 
     """docstring for TextWord"""
+    __mask = None
 
     def __init__(self, main_window=None, command=None):
         Entry.__init__(self, master=main_window, validatecommand=command)
+
+    def set_pass_word(self, mask):
+        if not isinstance(mask , str):
+             return 
+        self.__mask = mask 
+        self['show'] = mask
+
+    def set_read_only(self):
+        self['state'] = 'readonly'
 
 
 class QueryButton(Button):
