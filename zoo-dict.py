@@ -6,18 +6,20 @@ from Tkinter import Entry
 from Tkinter import Label
 from Tkinter import Button
 from Tkinter import StringVar
+from Tkinter import Text
+from webdict import YouDao
 
 
 class DictWindow(Tk):
 
     """词典主窗口 基于tk
-    pack 
+    pack
 
 
     ipadx = width
     ipady = height
-    padx = the distance which x to top 
-    pady = the distance which y to top 
+    padx = the distance which x to top
+    pady = the distance which y to top
     anchor = widget locate in the window
     side =  simple anchor
 
@@ -35,17 +37,32 @@ class DictWindow(Tk):
         self.__input.grid(
             padx=10, pady=10, sticky=self.get_anchor_str('LEFT_TOP'), ipadx=100, ipady=10)
 
-        self.__querybutton = QueryButton(master=self, command=self.p)
+        self.__querybutton = QueryButton(
+            master=self, command=self.key_word_search)
         self.__querybutton.grid(
             ipadx=20, ipady=7, padx=10, pady=10, sticky=self.get_anchor_str('RIGHT_TOP'), row=0)
-        self.__show_box_text = StringVar()
-        self.__show_box = ShowWordLabel(
-            master=self,  textvar=self.__show_box_text)
-        self.__show_box.grid(ipadx=100, ipady=100, padx=20,
-                             pady=30)
+        self.__show_text = ShowText(self)
+        self.__show_text.grid(ipadx=1, ipady=1, row=1)
+        self.__show_text.tag_config('keyword', foreground='red')
+        self.__show_text.tag_config('translation', foreground='yellow')
+        self.__show_text.tag_config('meaning', foreground='blue')
+        self.__web_dict = YouDao()
 
-    def p(self):
-        self.__show_box_text.set(self.__input.get())
+        # self.__show_box_text = StringVar()
+        # self.__show_box = ShowWordLabel(
+        #     master=self,  textvar=self.__show_box_text)
+        # self.__show_box.grid(ipadx=100, ipady=100, padx=20,
+        #                      pady=30)
+
+    def key_word_search(self):
+        __word = self.__input.get()
+        if not __word or __word.strip() == '':
+            return
+        _ws = self.__web_dict.query(self.__input.get())
+        self.__show_text.insert(1.0, _ws.word + '\n\n', 'keyword')
+        self.__show_text.insert(2.0, _ws.translation + '\n\n', 'translation')
+        print _ws.meaning
+        self.__show_text.insert(3.0, _ws.meaning, 'meaning')
 
     def get_anchor_str(self, locate_string):
         return self.__locate_dict[locate_string]
@@ -60,9 +77,9 @@ class TextWord(Entry):
         Entry.__init__(self, master=main_window, validatecommand=command)
 
     def set_pass_word(self, mask):
-        if not isinstance(mask , str):
-             return 
-        self.__mask = mask 
+        if not isinstance(mask, str):
+            return
+        self.__mask = mask
         self['show'] = mask
 
     def set_read_only(self):
@@ -88,6 +105,14 @@ class ShowWordLabel(Label):
     def set(self, text):
         if isinstance(text, str) or isinstance(text, unicode):
             self.__text = text
+
+
+class ShowText(Text):
+
+    """docstring for ShowText"""
+
+    def __init__(self, master=None, command=None, labeltext='example'):
+        Text.__init__(self, master=master)
 
 
 if __name__ == '__main__':

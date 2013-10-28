@@ -15,28 +15,23 @@ class WordMean():
     def __init__(self, word='', translation='', meaning=[]):
         self.word = word.encode('utf-8')
         self.translation = translation.encode('utf-8')
-        self.meaning = meaning
+        self.meaning = '\n'.join([mean.encode('utf-8') for mean in meaning])
 
     def __str__(self):
-        meaning_str = '\n'.join([mean.encode('utf-8') for mean in self.meaning])
-        return 'word : %s \n translation : %s\n meaning : %s' % (self.word, self.translation, meaning_str)
+        # meaning_str = 
+        return 'word : %s \n translation : %s\n meaning : %s' % (self.word, self.translation, self.meaning)
+
 
 class WebDIct(object):
 
+    def query(self, word):
+        pass
 
+    def audio(self, word):
+        pass
 
-	def query(self,word):
-		raise NotImplementedError
-
-
-	def audio(self, word):
-		raise NotImplementedError
-
-
-	def suggestword(self , word):
-		raise NotImplementedError
-
-
+    def suggestword(self, word):
+        pass
 
 
 class YouDao(WebDIct):
@@ -51,7 +46,7 @@ class YouDao(WebDIct):
 
     def __parser(self, word, data):
         _dict_json = json.loads(data)
-        return WordMean(word, _dict_json['translation'][0],_dict_json['basic']['explains'])
+        return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'])
 
 
 class Baidu(WebDIct):
@@ -61,4 +56,4 @@ class Baidu(WebDIct):
 
 if __name__ == '__main__':
     u = YouDao()
-    print u.suggestword('help')
+    print u.query('help')
