@@ -68,6 +68,7 @@ class DictWindow(Tk):
         self.__show_text.insert(1.0, _ws.word + '\n\n', 'keyword')
         self.__show_text.insert(3.0, _ws.translation + '\n\n', 'translation')
         __meaning_point = float(3.0 + len(_ws.meaning.split('\n')))
+        # .join(['' for _ in range(long(__meaning_point))]
         self.__show_text.insert(__meaning_point, _ws.meaning + '\n\n', 'meaning')
         self.__show_text.insert(__meaning_point + 5.0, _ws.example, 'meaning')
         
@@ -98,7 +99,7 @@ class QueryButton(Button):
 
     def __init__(self, master=None, command=None):
         Button.__init__(
-            self, master=master, command=command)
+            self, master=master,text = '查询', command=command)
 
 
 class ShowWordLabel(Label):
