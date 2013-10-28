@@ -11,6 +11,7 @@ from webdict import YouDao
 from Tkinter import END
 # from threading import Thread
 from Tkinter import NORMAL
+from suggestword import get_suggest_word
 
 
 class DictWindow(Tk):
@@ -39,10 +40,10 @@ class DictWindow(Tk):
         self.__search_word = StringVar()
         self.__input = TextWord(
             main_window=self, textvar=self.__search_word)
-        #对于entry没有监控的事件回调函数
-        #只能通过对于它的变量进行监控
+        # 对于entry没有监控的事件回调函数
+        # 只能通过对于它的变量进行监控
         #’r’:监视读事件，’w’:监视写事件，’u’:监视变量删除事件。
-        self.__search_word.trace('w' , self.text_change)
+        self.__search_word.trace('w', self.text_change)
         self.__input.grid(
             padx=10, pady=10, sticky=self.get_anchor_str('LEFT_TOP'), ipadx=100, ipady=10)
 
@@ -79,9 +80,13 @@ class DictWindow(Tk):
 
     def text_change(self, *args):
         __method = args[2]
-        print args
         if __method == 'w':
-            pass 
+            __word = self.__search_word.get()
+            if __word.strip() == '':
+                return
+            suggest_list = get_suggest_word(__word)
+            if suggest_list and len(suggest_list) > 0:
+                self.__search_word.set(suggest_list[0])
 
     def get_anchor_str(self, locate_string):
         return self.__locate_dict[locate_string]
