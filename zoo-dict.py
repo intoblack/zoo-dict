@@ -5,7 +5,7 @@ from Tkinter import Tk
 from Tkinter import Entry
 from Tkinter import Label
 from Tkinter import Button
-# from Tkinter import StringVar
+from Tkinter import StringVar
 from Tkinter import Text
 from webdict import YouDao
 from Tkinter import END
@@ -36,30 +36,34 @@ class DictWindow(Tk):
         Tk.__init__(self)
         self.title('Zoo-Dict')
         self.geometry('600x400')
-        self.__input = TextWord(main_window=self)
+        self.__search_word = StringVar()
+        self.__input = TextWord(
+            main_window=self, textvar=self.__search_word)
+        #对于entry没有监控的事件回调函数
+        #只能通过对于它的变量进行监控
+        #’r’:监视读事件，’w’:监视写事件，’u’:监视变量删除事件。
+        self.__search_word.trace('w' , self.text_change)
         self.__input.grid(
             padx=10, pady=10, sticky=self.get_anchor_str('LEFT_TOP'), ipadx=100, ipady=10)
 
         self.__querybutton = QueryButton(
-            master=self, command=self.key_word_search)
+            master=self, command=self.key_word_search, text='查询')
         self.__querybutton.grid(
             ipadx=20, ipady=7, padx=10, pady=10, sticky=self.get_anchor_str('RIGHT_TOP'), row=0)
         # self.__show_box_text = StringVar()
-        self.__show_text = ShowText(self )
+        self.__show_text = ShowText(self)
         self.__show_text.grid(ipadx=1, ipady=1, row=1)
         self.__show_text.tag_config('keyword', foreground='red')
         self.__show_text.tag_config('translation', foreground='green')
         self.__show_text.tag_config('meaning', foreground='blue')
         self.__web_dict = YouDao()
 
-        
         # self.__show_box = ShowWordLabel(
         #     master=self,  textvar=self.__show_box_text)
         # self.__show_box.grid(ipadx=100, ipady=100, padx=20,
         #                      pady=30)
-
     def key_word_search(self):
-        
+
         __word = self.__input.get()
         self.__show_text.clear_all()
         if not __word or __word.strip() == '':
@@ -69,9 +73,15 @@ class DictWindow(Tk):
         self.__show_text.insert(3.0, _ws.translation + '\n\n', 'translation')
         __meaning_point = float(3.0 + len(_ws.meaning.split('\n')))
         # .join(['' for _ in range(long(__meaning_point))]
-        self.__show_text.insert(__meaning_point, _ws.meaning + '\n\n', 'meaning')
+        self.__show_text.insert(
+            __meaning_point, _ws.meaning + '\n\n', 'meaning')
         self.__show_text.insert(__meaning_point + 5.0, _ws.example, 'meaning')
-        
+
+    def text_change(self, *args):
+        __method = args[2]
+        print args
+        if __method == 'w':
+            pass 
 
     def get_anchor_str(self, locate_string):
         return self.__locate_dict[locate_string]
@@ -82,8 +92,9 @@ class TextWord(Entry):
     """docstring for TextWord"""
     __mask = None
 
-    def __init__(self, main_window=None, command=None):
-        Entry.__init__(self, master=main_window, validatecommand=command)
+    def __init__(self, main_window=None, command=None, textvar=None):
+        Entry.__init__(
+            self, master=main_window, validatecommand=command, insertborderwidth=20, textvariable=textvar)
 
     def set_pass_word(self, mask):
         if not isinstance(mask, str):
@@ -97,9 +108,9 @@ class TextWord(Entry):
 
 class QueryButton(Button):
 
-    def __init__(self, master=None, command=None):
+    def __init__(self, master=None, text='', command=None):
         Button.__init__(
-            self, master=master,text = '查询', command=command)
+            self, master=master, text=text, command=command)
 
 
 class ShowWordLabel(Label):
@@ -121,12 +132,11 @@ class ShowText(Text):
     """docstring for ShowText"""
 
     def __init__(self, master=None):
-        Text.__init__(self, master=master , state = NORMAL)
+        Text.__init__(self, master=master, state=NORMAL)
 
     def clear_all(self):
-        self.delete(1.0 , END)
+        self.delete(1.0, END)
 
-    
 
 if __name__ == '__main__':
     d = DictWindow()
