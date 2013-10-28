@@ -4,7 +4,8 @@
 
 
 import threading
-
+from multiprocessing import Pool
+import time
 
 
 class WordSelect(object):
@@ -40,3 +41,23 @@ class WordSelect(object):
         else:
             self.__change = False
         WordSelect.__lock.release()
+
+
+class T(object):
+    x = 9
+
+    def  s(self):
+        self.x = 10
+
+    def p(self):
+        print self.x
+        print self.x
+        print self.x
+pool = Pool(1)
+
+t = T()
+pool.apply_async(t.s , callback = t.p )
+
+while True:
+    time.sleep(1)
+    print t.p()

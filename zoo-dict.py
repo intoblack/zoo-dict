@@ -5,10 +5,12 @@ from Tkinter import Tk
 from Tkinter import Entry
 from Tkinter import Label
 from Tkinter import Button
-from Tkinter import StringVar
+# from Tkinter import StringVar
 from Tkinter import Text
 from webdict import YouDao
 from Tkinter import END
+# from threading import Thread
+from Tkinter import NORMAL
 
 
 class DictWindow(Tk):
@@ -46,7 +48,7 @@ class DictWindow(Tk):
         self.__show_text = ShowText(self )
         self.__show_text.grid(ipadx=1, ipady=1, row=1)
         self.__show_text.tag_config('keyword', foreground='red')
-        self.__show_text.tag_config('translation', foreground='yellow')
+        self.__show_text.tag_config('translation', foreground='green')
         self.__show_text.tag_config('meaning', foreground='blue')
         self.__web_dict = YouDao()
 
@@ -64,9 +66,10 @@ class DictWindow(Tk):
             return
         _ws = self.__web_dict.query(self.__input.get())
         self.__show_text.insert(1.0, _ws.word + '\n\n', 'keyword')
-        self.__show_text.insert(2.0, _ws.translation + '\n\n', 'translation')
-        print _ws.meaning
-        self.__show_text.insert(3.0, _ws.meaning, 'meaning')
+        self.__show_text.insert(3.0, _ws.translation + '\n\n', 'translation')
+        __meaning_point = float(3.0 + len(_ws.meaning.split('\n')))
+        self.__show_text.insert(__meaning_point, _ws.meaning + '\n\n', 'meaning')
+        self.__show_text.insert(__meaning_point + 5.0, _ws.example, 'meaning')
         
 
     def get_anchor_str(self, locate_string):
@@ -117,7 +120,7 @@ class ShowText(Text):
     """docstring for ShowText"""
 
     def __init__(self, master=None):
-        Text.__init__(self, master=master )
+        Text.__init__(self, master=master , state = NORMAL)
 
     def clear_all(self):
         self.delete(1.0 , END)

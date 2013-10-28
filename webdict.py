@@ -12,14 +12,15 @@ class WordMean():
     translation = ''
     meaning = []
 
-    def __init__(self, word='', translation='', meaning=[]):
+    def __init__(self, word='', translation='', meaning=[], examples=[]):
         self.word = word.encode('utf-8')
         self.translation = translation.encode('utf-8')
         self.meaning = '\n'.join([mean.encode('utf-8') for mean in meaning])
+        self.example = '\n'.join([sen.encode('utf-8') for sen in examples])
 
     def __str__(self):
-        # meaning_str = 
-        return 'word : %s \n translation : %s\n meaning : %s' % (self.word, self.translation, self.meaning)
+        # meaning_str =
+        return 'word : %s \n translation : %s\n meaning : %s\n example : %s ' % (self.word, self.translation, self.meaning, self.example)
 
 
 class WebDIct(object):
@@ -45,9 +46,10 @@ class YouDao(WebDIct):
         return self.__parser(word, util.get_response_with_useragent(QUERY_URL).read())
 
     def __parser(self, word, data):
-        print data 
+        print data
         _dict_json = json.loads(data)
-        return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'])
+
+        return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'], ['%s:%s' % (value['key'], ','.join([word for word in value['value']])) for value in _dict_json['web']])
 
 
 class Baidu(WebDIct):
