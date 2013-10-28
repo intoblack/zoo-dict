@@ -8,6 +8,7 @@ from Tkinter import Button
 from Tkinter import StringVar
 from Tkinter import Text
 from webdict import YouDao
+from Tkinter import END
 
 
 class DictWindow(Tk):
@@ -41,21 +42,24 @@ class DictWindow(Tk):
             master=self, command=self.key_word_search)
         self.__querybutton.grid(
             ipadx=20, ipady=7, padx=10, pady=10, sticky=self.get_anchor_str('RIGHT_TOP'), row=0)
-        self.__show_text = ShowText(self)
+        # self.__show_box_text = StringVar()
+        self.__show_text = ShowText(self )
         self.__show_text.grid(ipadx=1, ipady=1, row=1)
         self.__show_text.tag_config('keyword', foreground='red')
         self.__show_text.tag_config('translation', foreground='yellow')
         self.__show_text.tag_config('meaning', foreground='blue')
         self.__web_dict = YouDao()
 
-        # self.__show_box_text = StringVar()
+        
         # self.__show_box = ShowWordLabel(
         #     master=self,  textvar=self.__show_box_text)
         # self.__show_box.grid(ipadx=100, ipady=100, padx=20,
         #                      pady=30)
 
     def key_word_search(self):
+        
         __word = self.__input.get()
+        self.__show_text.clear_all()
         if not __word or __word.strip() == '':
             return
         _ws = self.__web_dict.query(self.__input.get())
@@ -63,6 +67,7 @@ class DictWindow(Tk):
         self.__show_text.insert(2.0, _ws.translation + '\n\n', 'translation')
         print _ws.meaning
         self.__show_text.insert(3.0, _ws.meaning, 'meaning')
+        
 
     def get_anchor_str(self, locate_string):
         return self.__locate_dict[locate_string]
@@ -111,9 +116,13 @@ class ShowText(Text):
 
     """docstring for ShowText"""
 
-    def __init__(self, master=None, command=None, labeltext='example'):
-        Text.__init__(self, master=master)
+    def __init__(self, master=None):
+        Text.__init__(self, master=master )
 
+    def clear_all(self):
+        self.delete(1.0 , END)
+
+    
 
 if __name__ == '__main__':
     d = DictWindow()

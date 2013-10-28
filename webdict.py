@@ -45,6 +45,7 @@ class YouDao(WebDIct):
         return self.__parser(word, util.get_response_with_useragent(QUERY_URL).read())
 
     def __parser(self, word, data):
+        print data 
         _dict_json = json.loads(data)
         return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'])
 
