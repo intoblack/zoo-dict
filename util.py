@@ -95,14 +95,12 @@ def get_url_string(url , data = None):
     raise NoImplation,'get_url_string'
     
     
-def get_data_with_useragent(url , data = None,codemode = "gbk"):
-    header = {}
+def get_data_with_useragent(url , data = None, header = {},codemode = "gbk"):
     header["User-Agent"] =  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/28.0.1500.71 Chrome/28.0.1500.71 Safari/537.36"
     header["content-type"] = "application/x-www-form-urlencoded" 
     return _get_url_data(url , data=data , header=header , codemode=codemode)
 
-def get_response_with_useragent(url , data = None):
-    header = {}
+def get_response_with_useragent(url , data = None , header = {}):
     header["User-Agent"] =  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/28.0.1500.71 Chrome/28.0.1500.71 Safari/537.36"
     header["content-type"] = "application/x-www-form-urlencoded"
     return get_url_reponse(url , data = data, header = header)
@@ -118,7 +116,7 @@ def get_response_with_useragent(url , data = None):
     
 '''
 def get_url_html_string(base_url ,  query  = None , data = None ,code="utf-8"):
-    if query:
+    if query :
         url = queryurl(base_url, query)
     else:
         url = base_url
@@ -136,7 +134,7 @@ def jsonstrtodict(jsonstr):
 
 def queryurl(baseurl,querydict):
     if not (isinstance(querydict, dict) and isinstance(baseurl, str)):
-        raise TypeError
+        raise TypeError,querydict
     if not baseurl.endswith('?'):
         return '%s?%s' % (baseurl,_urlencode(querydict))
     else:

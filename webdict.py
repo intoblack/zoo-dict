@@ -26,10 +26,10 @@ class WordMean():
 
 
 class WebDIct(object):
-    #query 
+    # query
     #    参数 ： word 查询词
     #    返回 ： WordMean
-    #异常 : 没有 basic
+    # 异常 : 没有 basic
 
     def query(self, word):
         pass
@@ -55,12 +55,12 @@ class YouDao(WebDIct):
         _dict_json = json.loads(data)
         print _dict_json
         if not _dict_json.has_key('translation'):
-            return None 
+            return None
         return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'], ['%s:%s' % (value['key'], ','.join([word for word in value['value']])) for value in _dict_json['web']])
 
     def suggestword(self, word):
         __data = util.get_response_with_useragent(
-            self.SUGGEST + '&query=' + word  ).read()
+            self.SUGGEST + '&query=' + word).read()
         suggest_list = None
         if __data:
             __data = __data.strip()
@@ -77,6 +77,19 @@ class Baidu(WebDIct):
     QUERY = 'http://fanyi.baidu.com/transapi/'
 
 
+class Dict(WebDIct):
+    SUGGEST = 'http://dict.cn/apis/suggestion.php?'
+
+    def suggestword(self, word):
+        query = {'callback': 'jQuery%s_%s' % (util.randint(20), util.timems()),
+                 'q': word,
+                 'dict': 'dict',
+                 's': 'dict'}
+        __data = util.get_url_html_string(self.SUGGEST, query)
+        print __data
+        return [i['g'] for i in util.jsonstrtodict(util.getjson(__data).replace("&nbsp;", " "))['s']]
+
+
 if __name__ == '__main__':
-    u = YouDao()
-    print u.query('天使')
+    u = Dict()
+    print u.suggestword('angel')

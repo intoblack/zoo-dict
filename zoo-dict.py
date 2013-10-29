@@ -44,7 +44,7 @@ class DictWindow(Tk):
         # 只能通过对于它的变量进行监控
         #’r’:监视读事件，’w’:监视写事件，’u’:监视变量删除事件。
         self.__search_word.trace('w', self.text_change)
-        #添加对enter的监听 , 关联事件
+        # 添加对enter的监听 , 关联事件
         self.__input.bind("<KeyRelease>", self.enter_press)
         self.__input.grid(
             padx=10, pady=10, sticky=self.get_anchor_str('LEFT_TOP'), ipadx=100, ipady=10)
@@ -56,9 +56,9 @@ class DictWindow(Tk):
         # self.__show_box_text = StringVar()
         self.__show_text = ShowText(self)
         self.__show_text.grid(ipadx=1, ipady=1, row=1)
-        self.__show_text.tag_config('keyword', foreground='red') #词信息
-        self.__show_text.tag_config('translation', foreground='green') # 翻译
-        self.__show_text.tag_config('meaning', foreground='blue') # 词意
+        self.__show_text.tag_config('keyword', foreground='red')  # 词信息
+        self.__show_text.tag_config('translation', foreground='green')  # 翻译
+        self.__show_text.tag_config('meaning', foreground='blue')  # 词意
         self.__web_dict = YouDao()
 
         # self.__show_box = ShowWordLabel(
@@ -73,7 +73,7 @@ class DictWindow(Tk):
             return
         _ws = self.__web_dict.query(self.__input.get())
         if not _ws:
-            return 
+            return
         self.__show_text.insert(1.0, _ws.word + '\n\n', 'keyword')
         self.__show_text.insert(3.0, _ws.translation + '\n\n', 'translation')
         __meaning_point = float(3.0 + len(_ws.meaning.split('\n')))
@@ -105,7 +105,7 @@ class TextWord(Entry):
     """docstring for TextWord"""
     __mask = None
 
-    def __init__(self, main_window=None, command=None, textvar=None):
+    def __init__(self, main_window=None, command=None, textvar=None, binds={}):
         Entry.__init__(
             self, master=main_window, validatecommand=command, insertborderwidth=20, textvariable=textvar)
 
@@ -117,6 +117,12 @@ class TextWord(Entry):
 
     def set_read_only(self):
         self['state'] = 'readonly'
+
+    def reg_bind(self, binds={}):
+        for _key, _val in binds.items():
+            # 判断是否可执行
+            if callable(_val):
+                self.bind(_key, _val)
 
 
 class QueryButton(Button):
