@@ -4,8 +4,8 @@
 import threading
 import gtk
 import time
-import utils
-from suggestword import get_suggest_word
+import util
+from webdict import Dict
 
 
 class DetectClboard(threading.Thread):
@@ -39,15 +39,16 @@ class MonitorClip(object):
     def __init__(self):
         self.clip = gtk.clipboard_get(gtk.gdk.SELECTION_PRIMARY)
         self.clip.connect("owner-change", self._clipboard_changed)
+        self.suggest = Dict()
 
     def _clipboard_changed(self, clipboard, event):
         text = clipboard.wait_for_text()
         text = text.encode("utf-8")
         if not text == self.__old:
             self.__old = text
-            utils.cls()
-            self.__suggestwords
-            for word in get_suggest_word(text):
+            util.cls()
+            del self.__suggestwords
+            self.__suggestwords = [ word for word in self.suggest.suggestword(text)]
                 
 
 
