@@ -44,6 +44,8 @@ class DictWindow(Tk):
         # 只能通过对于它的变量进行监控
         #’r’:监视读事件，’w’:监视写事件，’u’:监视变量删除事件。
         self.__search_word.trace('w', self.text_change)
+        #添加对enter的监听 , 关联事件
+        self.__input.bind("<KeyRelease>", self.enter_press)
         self.__input.grid(
             padx=10, pady=10, sticky=self.get_anchor_str('LEFT_TOP'), ipadx=100, ipady=10)
 
@@ -84,12 +86,16 @@ class DictWindow(Tk):
             __word = self.__search_word.get()
             if __word.strip() == '':
                 return
-            suggest_list = get_suggest_word(__word)
-            if suggest_list and len(suggest_list) > 0:
-                self.__search_word.set(suggest_list[0])
+            # suggest_list = get_suggest_word(__word)
+            # if suggest_list and len(suggest_list) > 0:
+            #     self.__search_word.set(suggest_list[0])
 
     def get_anchor_str(self, locate_string):
         return self.__locate_dict[locate_string]
+
+    def enter_press(self, event):
+        if event.keysym == 'Return':
+            self.key_word_search()
 
 
 class TextWord(Entry):
