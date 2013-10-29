@@ -56,9 +56,9 @@ class DictWindow(Tk):
         # self.__show_box_text = StringVar()
         self.__show_text = ShowText(self)
         self.__show_text.grid(ipadx=1, ipady=1, row=1)
-        self.__show_text.tag_config('keyword', foreground='red')
-        self.__show_text.tag_config('translation', foreground='green')
-        self.__show_text.tag_config('meaning', foreground='blue')
+        self.__show_text.tag_config('keyword', foreground='red') #词信息
+        self.__show_text.tag_config('translation', foreground='green') # 翻译
+        self.__show_text.tag_config('meaning', foreground='blue') # 词意
         self.__web_dict = YouDao()
 
         # self.__show_box = ShowWordLabel(
@@ -72,6 +72,8 @@ class DictWindow(Tk):
         if not __word or __word.strip() == '':
             return
         _ws = self.__web_dict.query(self.__input.get())
+        if not _ws:
+            return 
         self.__show_text.insert(1.0, _ws.word + '\n\n', 'keyword')
         self.__show_text.insert(3.0, _ws.translation + '\n\n', 'translation')
         __meaning_point = float(3.0 + len(_ws.meaning.split('\n')))

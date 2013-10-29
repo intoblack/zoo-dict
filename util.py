@@ -188,6 +188,20 @@ def getjson(data):
     return data[data.index("{"):data.rindex("}")+1]
 
 
+def urldecode(query):
+    d = {}
+    a = query.split('&')
+    for s in a:
+        if s.find('='):
+            k,v = map(urllib.unquote, s.split('='))
+            try:
+                d[k].append(v)
+            except KeyError:
+                d[k] = [v]
+    return d
+
+
+
 if __name__ == "__main__":
     print get_html_string('http://news.baidu.com/')
 
