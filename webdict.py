@@ -43,20 +43,23 @@ class WebDIct(object):
 
 class YouDao(WebDIct):
 
-    """docstring for YouDao"""
     SUGGEST = 'http://dsuggest.ydstatic.com/suggest/suggest.s?keyfrom=dict.suggest'
-    QUERY = 'http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&q='
+    QUERY = 'http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&'
 
     def query(self, word):
-        QUERY_URL = self.QUERY + word
+        QUERY_URL = self.QUERY + urllib.urlencode({'q' : word.encode('utf-8')})
+        # print QUERY_URL
         return self.__parser(word, util.get_response_with_useragent(QUERY_URL).read())
 
     def __parser(self, word, data):
         _dict_json = json.loads(data)
-        print _dict_json
-        if not _dict_json.has_key('translation'):
+        # print _dict_json
+        if _dict_json.has_key('basic'):
+            return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'], ['%s:%s' % (value['key'], ','.join([word for word in value['value']])) for value in _dict_json['web']])
+        elif _dict_json.has_key('translation'):
+            return WordMean(word , _dict_json['translation'][0])
+        else:
             return None
-        return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'], ['%s:%s' % (value['key'], ','.join([word for word in value['value']])) for value in _dict_json['web']])
 
     def suggestword(self, word):
         __data = util.get_response_with_useragent(

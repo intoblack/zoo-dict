@@ -44,14 +44,16 @@ class MonitorClip(object):
     def _clipboard_changed(self, clipboard, event):
         text = clipboard.wait_for_text()
         text = text.encode("utf-8")
+        print text
         if not text == self.__old:
             self.__old = text
             util.cls()
             del self.__suggestwords
             self.__suggestwords = [ word for word in self.suggest.suggestword(text)]
+            print self.__suggestwords
                 
 
 
 if __name__ == "__main__":
-    m = DetectClboard()
-    m.start()
+    m = MonitorClip()
+    gtk.mainloop()
