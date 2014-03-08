@@ -5,9 +5,11 @@
 import urllib2
 import json
 import urllib
-import os
+# import os
 from optparse import OptionParser
 import sys
+from subprocess import call  
+# import commands
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -51,7 +53,6 @@ class YouDao(WebDIct):
     QUERY = 'http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&'
 
     def query(self, word):
-    	print word
         QUERY_URL = self.QUERY + urllib.urlencode({'q': word})
         return self.__parser(word, urllib2.urlopen(QUERY_URL).read())
 
@@ -138,7 +139,10 @@ class ConsleString(object):
             return ''
 
 def consle_show(word):
-	os.system("echo -e \'%s\'" % word)
+	call(['echo' , '-e' , '%s' % word])
+
+def consle_clear():
+	call(['clear'])
 
 
 if __name__ == '__main__':
@@ -153,6 +157,7 @@ if __name__ == '__main__':
     	if options.suggest:
     		print yd.suggestword(options.word)
     	elif options.translate:
+    		consle_clear()
     		word_mean = yd.query(options.word)
     		consle_show(consle_string.red.black.append_string('单词 :').green.black.append_string(word_mean.word))
     		consle_string.clear()
