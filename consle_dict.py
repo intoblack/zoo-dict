@@ -7,7 +7,7 @@ import json
 import urllib
 from optparse import OptionParser
 import sys
-from subprocess import call  
+from subprocess import call
 import json
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -66,16 +66,15 @@ class YouDao(WebDIct):
 
     def suggestword(self, word):
         __data = urllib2.urlopen(
-            self.SUGGEST + urllib.urlencode({'q' : word})).read()
+            self.SUGGEST + urllib.urlencode({'q': word})).read()
         if __data:
-            word_dict = json.loads(__data) 
+            word_dict = json.loads(__data)
             if word_dict.has_key('s'):
-            	return [(sug['g'] , sug['e'].replace(';&nbsp' , '')) for sug in word_dict['s']]
+                return [(sug['g'], sug['e'].replace(';&nbsp', '')) for sug in word_dict['s']]
             return word_dict
 
 
 class ConsleString(object):
-
 
     __strbuffer = []
     __fore_color = False
@@ -83,10 +82,10 @@ class ConsleString(object):
 
     def append_string(self, value):
         if self.__strbuffer and not self.__fore_color:
-        	if self.__strbuffer[len(self.__strbuffer) - 1] != '1m' and  self.__strbuffer[len(self.__strbuffer) - 1] != '0m':
-        		self.__strbuffer.append('1m')
-        	self.__append = False
-        	self.__strbuffer.append(value)
+            if self.__strbuffer[len(self.__strbuffer) - 1] != '1m' and self.__strbuffer[len(self.__strbuffer) - 1] != '0m':
+                self.__strbuffer.append('1m')
+            self.__append = False
+            self.__strbuffer.append(value)
         return self
 
     def clear(self):
@@ -110,7 +109,7 @@ class ConsleString(object):
         self.__color(key, 'darkgreen', 36, 46)
         self.__color(key, 'white', 37, 47)
         if key == 'consle':
-        	self.__strbuffer.append('0m')
+            self.__strbuffer.append('0m')
         if key == 'hg':
             self.__strbuffer.append('1m')
         if key == 'low':
@@ -136,40 +135,54 @@ class ConsleString(object):
 
     @staticmethod
     def consle_show(sentence):
-    	call(['echo' , '-e' , '%s' % sentence])
+        call(['echo', '-e', '%s' % sentence])
 
     @staticmethod
     def consle_clear():
-    	call(['clear'])
+        call(['clear'])
 
-
-
+    @staticmethod
+    def consle_move(line):
+        call(['echo', '-e', '\33[%dC' % (line)])
 
 
 if __name__ == '__main__':
     opts = OptionParser()
-    opts.add_option('-t', '--translte', dest='translate' , action = 'store_false',  help='chose function to find word meaning' , default = True)
-    opts.add_option('-s', '--suggest', dest='suggest' , action = 'store_true',  help='chose function to find word suggestion' , default = False)
-    opts.add_option('-w' , '--word' , dest = 'word' , help = 'find and suggest word ')
-    (options,args) = opts.parse_args(sys.argv)
+    opts.add_option(
+        '-t', '--translte', dest='translate', action='store_false',
+        help='chose function to find word meaning', default=True)
+    opts.add_option('-s', '--suggest', dest='suggest', action='store_true',
+                    help='chose function to find word suggestion', default=False)
+    opts.add_option(
+        '-w', '--word', dest='word', help='find and suggest word ')
+    (options, args) = opts.parse_args(sys.argv)
     if options.word:
-    	yd = YouDao()
-    	if options.suggest:
-    		consle_string = ConsleString()
-    		ConsleString.consle_clear()
-    		for suggest_arry in yd.suggestword(options.word):
-    			consle_string.clear()
-    			ConsleString.consle_show(consle_string.red.black.append_string(suggest_arry[0]).consle.append_string('\t\t').green.black.append_string(suggest_arry[1]))
-    	elif options.translate:
-    		consle_string = ConsleString()
-    		ConsleString.consle_clear()
-    		word_mean = yd.query(options.word)
-    		ConsleString.consle_show(consle_string.red.black.append_string('单词 :').green.black.append_string(word_mean.word))
-    		consle_string.clear()
-    		ConsleString.consle_show(consle_string.red.black.append_string('翻译 :').green.black.append_string(word_mean.translation))
-    		consle_string.clear()
-    		ConsleString.consle_show(consle_string.red.black.append_string('单词释义 :').green.black.append_string(word_mean.meaning))
-    		consle_string.clear()
-    		ConsleString.consle_show(consle_string.red.black.append_string('例子 :').green.black.append_string(word_mean.example))
-
-
+        yd = YouDao()
+        if options.suggest:
+            consle_string = ConsleString()
+            ConsleString.consle_clear()
+            [ConsleString.consle_show('') for _ in range(4)]
+            ConsleString.consle_show(consle_string.green.black.append_string('建议词         ：'))
+            for suggest_arry in yd.suggestword(options.word):
+                consle_string.clear()
+                ConsleString.consle_show('')
+                ConsleString.consle_show(consle_string.red.black.append_string(
+                    '\t\t\t\t%s' % suggest_arry[0]).consle.append_string('\t\t').green.black.append_string(suggest_arry[1]))
+            [ConsleString.consle_show('') for _ in range(4)]
+        elif options.translate:
+            consle_string = ConsleString()
+            ConsleString.consle_clear()
+            word_mean = yd.query(options.word)
+            [ConsleString.consle_show('') for _ in range(4)]
+            ConsleString.consle_show(consle_string.red.black.append_string(
+                '\t\t\t\t单词 :').green.black.append_string(word_mean.word))
+            consle_string.clear()
+            ConsleString.consle_show(consle_string.red.black.append_string(
+                '\t\t\t\t翻译 :').green.black.append_string(word_mean.translation))
+            consle_string.clear()
+            ConsleString.consle_show(consle_string.red.black.append_string(
+                '\t\t\t\t单词释义 :').green.black.append_string(word_mean.meaning))
+            consle_string.clear()
+            ConsleString.consle_show(consle_string.red.black.append_string(
+                '\t\t\t\t例子 :').green.black.append_string(word_mean.example))
+            [ConsleString.consle_show('') for _ in range(4)]
