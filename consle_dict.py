@@ -76,6 +76,7 @@ class YouDao(WebDIct):
 
 class ConsleString(object):
 
+
     __strbuffer = []
     __fore_color = False
     __append = False
@@ -133,11 +134,16 @@ class ConsleString(object):
         else:
             return ''
 
-def consle_show(word):
-	call(['echo' , '-e' , '%s' % word])
+    @staticmethod
+    def consle_show(sentence):
+    	call(['echo' , '-e' , '%s' % sentence])
 
-def consle_clear():
-	call(['clear'])
+    @staticmethod
+    def consle_clear():
+    	call(['clear'])
+
+
+
 
 
 if __name__ == '__main__':
@@ -150,20 +156,20 @@ if __name__ == '__main__':
     	yd = YouDao()
     	if options.suggest:
     		consle_string = ConsleString()
-    		consle_clear()
+    		ConsleString.consle_clear()
     		for suggest_arry in yd.suggestword(options.word):
     			consle_string.clear()
-    			consle_show(consle_string.red.black.append_string(suggest_arry[0]).consle.append_string('\t\t').green.black.append_string(suggest_arry[1]))
+    			ConsleString.consle_show(consle_string.red.black.append_string(suggest_arry[0]).consle.append_string('\t\t').green.black.append_string(suggest_arry[1]))
     	elif options.translate:
     		consle_string = ConsleString()
-    		consle_clear()
+    		ConsleString.consle_clear()
     		word_mean = yd.query(options.word)
-    		consle_show(consle_string.red.black.append_string('单词 :').green.black.append_string(word_mean.word))
+    		ConsleString.consle_show(consle_string.red.black.append_string('单词 :').green.black.append_string(word_mean.word))
     		consle_string.clear()
-    		consle_show(consle_string.red.black.append_string('翻译 :').green.black.append_string(word_mean.translation))
+    		ConsleString.consle_show(consle_string.red.black.append_string('翻译 :').green.black.append_string(word_mean.translation))
     		consle_string.clear()
-    		consle_show(consle_string.red.black.append_string('单词释义 :').green.black.append_string(word_mean.meaning))
+    		ConsleString.consle_show(consle_string.red.black.append_string('单词释义 :').green.black.append_string(word_mean.meaning))
     		consle_string.clear()
-    		consle_show(consle_string.red.black.append_string('例子 :').green.black.append_string(word_mean.example))
+    		ConsleString.consle_show(consle_string.red.black.append_string('例子 :').green.black.append_string(word_mean.example))
 
 

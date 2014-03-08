@@ -5,7 +5,8 @@
 import util
 import json
 import urllib
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
+
 
 
 class WordMean():
@@ -21,7 +22,6 @@ class WordMean():
         self.example = '\n'.join([sen.encode('utf-8') for sen in examples])
 
     def __str__(self):
-        # meaning_str =
         return 'word : %s \n translation : %s\n meaning : %s\n example : %s ' % (self.word, self.translation, self.meaning, self.example)
 
 
@@ -94,5 +94,5 @@ class Dict(WebDIct):
 
 
 if __name__ == '__main__':
-    u = Dict()
-    print u.suggestword('angel')
+    u = YouDao()
+    print u.query('angel')
