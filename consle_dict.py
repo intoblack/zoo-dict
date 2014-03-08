@@ -22,12 +22,12 @@ class WordMean():
     def __init__(self, word='', translation='', meaning=[], examples=[]):
         self.word = word.encode('utf-8')
         self.translation = translation.encode('utf-8')
-        self.meaning = '\n'.join([mean.encode('utf-8') for mean in meaning])
-        self.example = '\n'.join([sen.encode('utf-8') for sen in examples])
+        self.meaning = meaning
+        self.example = examples
 
     def __str__(self):
         # meaning_str =
-        return 'word : %s \n translation : %s\n meaning : %s\n example : %s ' % (self.word, self.translation, self.meaning, self.example)
+        return 'word : %s \n translation : %s\n meaning : %s\n example : %s ' % (self.word, self.translation, '\n'.join([mean.encode('utf-8') for mean in meaning]) , ''.join([sen.encode('utf-8') for sen in examples]))
 
 
 class WebDIct(object):
@@ -58,7 +58,7 @@ class YouDao(WebDIct):
     def __parser(self, word, data):
         _dict_json = json.loads(data)
         if _dict_json.has_key('basic'):
-            return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'], ['%s:%s' % (value['key'], ','.join([word for word in value['value']])) for value in _dict_json['web']])
+            return WordMean(word, _dict_json['translation'][0], _dict_json['basic']['explains'], ['%s  :  %s\n' % (value['key'], ','.join([word for word in value['value']])) for value in _dict_json['web']])
         elif _dict_json.has_key('translation'):
             return WordMean(word, _dict_json['translation'][0])
         else:
@@ -163,11 +163,13 @@ if __name__ == '__main__':
             ConsleString.consle_clear()
             [ConsleString.consle_show('') for _ in range(4)]
             ConsleString.consle_show(consle_string.green.black.append_string('建议词         ：'))
-            for suggest_arry in yd.suggestword(options.word):
+            suggest_list = yd.suggestword(options.word)
+            for i in range(len(suggest_list)):
+            	suggest_arry = suggest_list[i]
                 consle_string.clear()
                 ConsleString.consle_show('')
                 ConsleString.consle_show(consle_string.red.black.append_string(
-                    '\t\t\t\t%s' % suggest_arry[0]).consle.append_string('\t\t').green.black.append_string(suggest_arry[1]))
+                    '  %d.  %s' % (i + 1, suggest_arry[0].strip())).consle.append_string('\t\t').green.black.append_string(suggest_arry[1]))
             [ConsleString.consle_show('') for _ in range(4)]
         elif options.translate:
             consle_string = ConsleString()
@@ -175,14 +177,20 @@ if __name__ == '__main__':
             word_mean = yd.query(options.word)
             [ConsleString.consle_show('') for _ in range(4)]
             ConsleString.consle_show(consle_string.red.black.append_string(
-                '\t\t\t\t单词 :').green.black.append_string(word_mean.word))
+                '单词 :\t').green.black.append_string(word_mean.word))
             consle_string.clear()
             ConsleString.consle_show(consle_string.red.black.append_string(
-                '\t\t\t\t翻译 :').green.black.append_string(word_mean.translation))
+                '翻译 :\t').green.black.append_string(word_mean.translation))
             consle_string.clear()
             ConsleString.consle_show(consle_string.red.black.append_string(
-                '\t\t\t\t单词释义 :').green.black.append_string(word_mean.meaning))
+                '单词释义 :'))
+            for i in range(len(word_mean.meaning)):
+            	consle_string.clear()
+            	ConsleString.consle_show(consle_string.green.black.append_string('\t %d. %s' % ( i+1 , word_mean.meaning[i])))
             consle_string.clear()
             ConsleString.consle_show(consle_string.red.black.append_string(
-                '\t\t\t\t例子 :').green.black.append_string(word_mean.example))
+                '例子 :'))
+            for i in range(len(word_mean.example)):
+            	consle_string.clear()
+            	ConsleString.consle_show(consle_string.green.black.append_string('\t %d. %s' %(i+1, word_mean.example[i])))
             [ConsleString.consle_show('') for _ in range(4)]
