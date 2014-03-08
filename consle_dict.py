@@ -5,11 +5,10 @@
 import urllib2
 import json
 import urllib
-# import os
 from optparse import OptionParser
 import sys
 from subprocess import call  
-# import commands
+import json
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -49,7 +48,7 @@ class WebDIct(object):
 
 class YouDao(WebDIct):
 
-    SUGGEST = 'http://dsuggest.ydstatic.com/suggest/suggest.s?keyfrom=dict.suggest'
+    SUGGEST = 'http://dict.cn/apis/suggestion.php?dict=dict&s=dict&'
     QUERY = 'http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&'
 
     def query(self, word):
@@ -66,17 +65,13 @@ class YouDao(WebDIct):
             return None
 
     def suggestword(self, word):
-        __data = util.get_response_with_useragent(
-            self.SUGGEST + '&query=' + word).read()
-        suggest_list = None
+        __data = urllib2.urlopen(
+            self.SUGGEST + urllib.urlencode({'q' : word})).read()
         if __data:
-            __data = __data.strip()
-            __html = __data[__data.index('l(') + 3:-3]
-            __html = urllib.unquote(__html.decode('utf-8'))
-            soup = BeautifulSoup(__html)
-            suggest_list = [__sugest.string for __sugest in soup.findAll(
-                'td', attrs={'class': 'remindtt75'})]
-        return suggest_list
+            word_dict = json.loads(__data) 
+            if word_dict.has_key('s'):
+            	return [(sug['g'] , sug['e'].replace(';&nbsp' , '')) for sug in word_dict['s']]
+            return word_dict
 
 
 class ConsleString(object):
@@ -87,7 +82,7 @@ class ConsleString(object):
 
     def append_string(self, value):
         if self.__strbuffer and not self.__fore_color:
-        	if self.__strbuffer[len(self.__strbuffer) - 1] != '1m' or  self.__strbuffer[len(self.__strbuffer) - 1] != '0m':
+        	if self.__strbuffer[len(self.__strbuffer) - 1] != '1m' and  self.__strbuffer[len(self.__strbuffer) - 1] != '0m':
         		self.__strbuffer.append('1m')
         	self.__append = False
         	self.__strbuffer.append(value)
@@ -114,7 +109,7 @@ class ConsleString(object):
         self.__color(key, 'darkgreen', 36, 46)
         self.__color(key, 'white', 37, 47)
         if key == 'consle':
-        	self.__strbuffer.append('\e[0m')
+        	self.__strbuffer.append('0m')
         if key == 'hg':
             self.__strbuffer.append('1m')
         if key == 'low':
@@ -153,10 +148,14 @@ if __name__ == '__main__':
     (options,args) = opts.parse_args(sys.argv)
     if options.word:
     	yd = YouDao()
-    	consle_string = ConsleString()
     	if options.suggest:
-    		print yd.suggestword(options.word)
+    		consle_string = ConsleString()
+    		consle_clear()
+    		for suggest_arry in yd.suggestword(options.word):
+    			consle_string.clear()
+    			consle_show(consle_string.red.black.append_string(suggest_arry[0]).consle.append_string('\t\t').green.black.append_string(suggest_arry[1]))
     	elif options.translate:
+    		consle_string = ConsleString()
     		consle_clear()
     		word_mean = yd.query(options.word)
     		consle_show(consle_string.red.black.append_string('单词 :').green.black.append_string(word_mean.word))
