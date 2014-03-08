@@ -82,21 +82,28 @@ class ConsleString(object):
 
     __strbuffer = []
     __fore_color = False
+    __append = False
 
     def append_string(self, value):
         if self.__strbuffer and not self.__fore_color:
-            self.__strbuffer.append(value)
+        	if self.__strbuffer[len(self.__strbuffer) - 1] != '1m' or  self.__strbuffer[len(self.__strbuffer) - 1] != '0m':
+        		self.__strbuffer.append('1m')
+        	self.__append = False
+        	self.__strbuffer.append(value)
         return self
 
     def clear(self):
         if self.__strbuffer and len(self.__strbuffer) > 0:
             del self.__strbuffer[:]
+            self.__append = False
+            self.__fore_color = False
 
     def __getattr__(self, key):
         if not self.__strbuffer:
             self.__strbuffer = list()
-        if len(self.__strbuffer) == 0:
+        if len(self.__strbuffer) == 0 or not self.__append:
             self.__strbuffer.append('\e[')
+            self.__append = True
         self.__color(key, 'black', 30, 40)
         self.__color(key, 'red', 31, 41)
         self.__color(key, 'green', 32, 42)
@@ -130,6 +137,9 @@ class ConsleString(object):
         else:
             return ''
 
+def consle_show(word):
+	os.system("echo -e \'%s\'" % word)
+
 
 if __name__ == '__main__':
     opts = OptionParser()
@@ -144,6 +154,12 @@ if __name__ == '__main__':
     		print yd.suggestword(options.word)
     	elif options.translate:
     		word_mean = yd.query(options.word)
-    		os.system('echo -e \"%s\"' % consle_string.red.black.hg.append_string('word :').consle.append_string(word_mean.word))
+    		consle_show(consle_string.red.black.append_string('单词 :').green.black.append_string(word_mean.word))
+    		consle_string.clear()
+    		consle_show(consle_string.red.black.append_string('翻译 :').green.black.append_string(word_mean.translation))
+    		consle_string.clear()
+    		consle_show(consle_string.red.black.append_string('单词释义 :').green.black.append_string(word_mean.meaning))
+    		consle_string.clear()
+    		consle_show(consle_string.red.black.append_string('例子 :').green.black.append_string(word_mean.example))
 
 
